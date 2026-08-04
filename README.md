@@ -10,7 +10,7 @@ Optionally, a separate command lets an SCP voluntarily give up their role early 
 
 ## Requirements
 
-- [EXLIED](https://github.com/ExMod-Team/EXILED) 9.14.2 or later
+- [EXILED](https://github.com/ExMod-Team/EXILED) 9.14.2 or later
 
 ## Installation
 
