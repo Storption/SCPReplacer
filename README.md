@@ -1,7 +1,11 @@
 # SCPReplacer
 
-[![Downloads](https://img.shields.io/github/downloads/Storption/SCPReplacer/total?style=for-the-badge&logo=github&color=%)](https://github.com/Storption/SCPReplacer/releases/latest)
-[![Latest](https://img.shields.io/github/v/release/Storption/SCPReplacer?include_prereleases&style=for-the-badge&logo=github&label=Latest%20Release&color=%)](https://github.com/Storption/SCPReplacer/releases/latest)
+An [EXILED](https://github.com/ExMod-Team/EXILED) plugin for SCP: Secret Laboratory that lets players volunteer to take over an SCP role after the original player disconnects early in the round.
+ 
+Inspired by / based on the concept from [jmoore34/ScpReplacer](https://github.com/jmoore34/ScpReplacer) — this is an independent rewrite, not a fork.
+
+[![Downloads](https://img.shields.io/github/downloads/Storption/SCPReplacer/total?style=for-the-badge&logo=github&color=blue)](https://github.com/Storption/SCPReplacer/releases/latest)
+[![Latest](https://img.shields.io/github/v/release/Storption/SCPReplacer?include_prereleases&style=for-the-badge&logo=github&label=Latest%20Release&color=green)](https://github.com/Storption/SCPReplacer/releases/latest)
 
 ## How it works
 If an SCP disconnects within a configurable time window at the start of the round, and had at least a configurable percentage of their health remaining, a broadcast opens a short lottery: any eligible player can type `.volunteer <number>` to enter. Once the lottery period ends, a random volunteer is chosen and takes over that SCP.
@@ -26,7 +30,7 @@ is_enabled: true
 # Whether debug messages are shown.
 debug: false
 # How many seconds into the round an SCP can disconnect and still trigger a replacement lottery.
-quit_cutoff_secconds: 60
+quit_cutoff_seconds: 60
 # The minimum health percentage (0-100) the SCP must have had remaining to trigger a replacement.
 required_health_percent: 100
 # How many seconds players have to volunteer once the lottery opens.

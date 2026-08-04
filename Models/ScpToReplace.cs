@@ -6,6 +6,8 @@
     using System.Threading.Tasks;
     using Exiled.API.Features;
     using Exiled.API.Enums;
+    using Exiled.CustomRoles.API;
+    using Exiled.CustomRoles.API.Features;
     using PlayerRoles;
 
     /// <summary>
@@ -109,6 +111,9 @@
                 .First(r => r.ScpNumber() == Name);
 
             chosen.Role.Set(scpRole, SpawnReason.LateJoin);
+            foreach (CustomRole customRole in chosen.GetCustomRoles())
+                customRole.RemoveRole(chosen);
+            chosen.DisableAllEffects();
 
             foreach (Player p in Player.List)
             {

@@ -4,6 +4,8 @@
     using CommandSystem;
     using Exiled.API.Enums;
     using Exiled.API.Features;
+    using Exiled.CustomRoles.API;
+    using Exiled.CustomRoles.API.Features;
     using PlayerRoles;
 
     /// <summary>
@@ -65,6 +67,9 @@
             };
 
             player.Role.Set(newRole, SpawnReason.LateJoin, RoleSpawnFlags.All);
+            foreach (CustomRole customRole in player.GetCustomRoles())
+                customRole.RemoveRole(player);
+            player.DisableAllEffects();
 
             Translation translation = Plugin.Instance.Translation;
             response = string.Format(translation.HumanForfeitConfirmed, newRole);
