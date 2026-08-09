@@ -40,3 +40,6 @@ human_forfeit_enabled: false
 ```
 
 All broadcast and message text, including the header shown on every plugin broadcast, is configurable via the generated translation file.
+
+## Support
+Can join my [Discord](https://join.storption.com)
