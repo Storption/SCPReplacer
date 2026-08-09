@@ -19,7 +19,7 @@ Optionally, a separate command lets an SCP voluntarily give up their role early 
 ## Installation
 
 1. Download the latest `SCPReplacer.dll` from the [Releases](https://github.com/Storption/SCPReplacer/releases) page.
-2. Place it in your server's EXILED plugins folder (`%AppData%\EXILED\Plugins` on Windows).
+2. Place it in your server's EXILED plugins folder (`%AppData%\EXILED\Plugins` on Windows `.config\EXILED\Plugins` on Linux).
 3. Restart your server. A default config will be generated on first load.
 
 ## Config
