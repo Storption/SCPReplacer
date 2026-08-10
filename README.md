@@ -6,6 +6,7 @@ Inspired by / based on the concept from [jmoore34/ScpReplacer](https://github.co
 
 [![Downloads](https://img.shields.io/github/downloads/Storption/SCPReplacer/total?style=for-the-badge&logo=github&color=blue)](https://github.com/Storption/SCPReplacer/releases/latest)
 [![Latest](https://img.shields.io/github/v/release/Storption/SCPReplacer?include_prereleases&style=for-the-badge&logo=github&label=Latest%20Release&color=green)](https://github.com/Storption/SCPReplacer/releases/latest)
+[![Discord](https://img.shields.io/discord/1114170053949128817?style=for-the-badge&color=5865F2&logo=discord&label=Discord&logoColor=white)](https://join.storption.com)
 
 ## How it works
 If an SCP disconnects within a configurable time window at the start of the round, and had at least a configurable percentage of their health remaining, a broadcast opens a short lottery: any eligible player can type `.volunteer <number>` to enter. Once the lottery period ends, a random volunteer is chosen and takes over that SCP.
@@ -40,6 +41,3 @@ human_forfeit_enabled: false
 ```
 
 All broadcast and message text, including the header shown on every plugin broadcast, is configurable via the generated translation file.
-
-## Support
-Can join my [Discord](https://join.storption.com)
