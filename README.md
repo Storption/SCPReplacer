@@ -13,6 +13,8 @@ If an SCP disconnects within a configurable time window at the start of the roun
 
 Optionally, a separate command lets an SCP voluntarily give up their role early (for a random human class) instead of waiting to be replaced.
 
+**Auto-update** - checks this plugin's own GitHub repo for a newer release, and if found, downloads and applies it automatically, restarting the server once the current round ends.
+
 ## Requirements
 
 - [EXILED](https://github.com/ExMod-Team/EXILED) 9.14.2 or later
@@ -20,7 +22,7 @@ Optionally, a separate command lets an SCP voluntarily give up their role early 
 ## Installation
 
 1. Download the latest `SCPReplacer.dll` from the [Releases](https://github.com/Storption/SCPReplacer/releases) page.
-2. Place it in your server's EXILED plugins folder (`%AppData%\EXILED\Plugins` on Windows `.config\EXILED\Plugins` on Linux).
+2. Place it in your server's EXILED plugins folder (`%AppData%\EXILED\Plugins` on Windows, `.config\EXILED\Plugins` on Linux).
 3. Restart your server. A default config will be generated on first load.
 
 ## Config
@@ -38,6 +40,12 @@ required_health_percent: 100
 lottery_period_seconds: 15
 # Whether the .human/.no forfeit command is enabled at all.
 human_forfeit_enabled: false
+# Whether to check for and automatically install updates.
+auto_update_enabled: true
+# Whether to keep a backup of the previous .dll before replacing it with an update.
+auto_update_backup: true
+# Whether to automatically restart the server once the current round ends, to apply a downloaded update. Never restarts mid-round.
+auto_update_restart: true
 ```
 
 All broadcast and message text, including the header shown on every plugin broadcast, is configurable via the generated translation file.

@@ -115,11 +115,13 @@
                 customRole.RemoveRole(chosen);
             chosen.DisableAllEffects();
 
+            string coloredScpLabel = scpRole.ColoredScpLabel();
+
             foreach (Player p in Player.List)
             {
                 string message = p == chosen
-                    ? translation.BroadcastHeader + string.Format(translation.LotteryWon, Name)
-                    : translation.BroadcastHeader + string.Format(translation.ReplacementAnnouncement, Name);
+                    ? translation.BroadcastHeader + string.Format(translation.LotteryWon, coloredScpLabel)
+                    : translation.BroadcastHeader + string.Format(translation.ReplacementAnnouncement, coloredScpLabel);
 
                 p.Broadcast(new Broadcast(message, 5));
             }

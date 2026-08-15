@@ -30,7 +30,7 @@
         public override Version RequiredExiledVersion { get; } = new Version(9, 14, 2);
 
         /// <inheritdoc/>
-        public override Version Version { get; } = new Version(1, 0, 1);
+        public override Version Version { get; } = new Version(1, 1, 0);
 
         /// <inheritdoc/>
         public override void OnEnabled()
@@ -40,6 +40,8 @@
             eventHandlers = new EventHandlers();
             PlayerHandlers.Left += eventHandlers.OnLeft;
             ServerHandlers.RoundStarted += eventHandlers.OnRoundStarted;
+
+            Modules.AutoUpdate.RegisterEvents();
 
             base.OnEnabled();
         }
@@ -52,6 +54,8 @@
                 PlayerHandlers.Left -= eventHandlers.OnLeft;
                 ServerHandlers.RoundStarted -= eventHandlers.OnRoundStarted;
             }
+
+            Modules.AutoUpdate.UnregisterEvents();
 
             eventHandlers = null;
             Instance = null;

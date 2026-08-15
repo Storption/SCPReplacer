@@ -1,6 +1,9 @@
 ﻿namespace SCPReplacer
 {
+    using System;
+    using System.Linq;
     using System.Text.RegularExpressions;
+    using Exiled.API.Extensions;
     using PlayerRoles;
 
     /// <summary>
@@ -22,6 +25,25 @@
         public static string ScpNumber(this RoleTypeId role)
         {
             return Regex.Replace(role.ToString(), "[^0-9]", string.Empty);
+        }
+
+        /// <summary>
+        /// Finds the RoleTypeId matching a given SCP number string (e.g. "079" -> RoleTypeId.Scp079).
+        /// </summary>
+        public static RoleTypeId FindScpRole(string scpNumber)
+        {
+            return Enum.GetValues(typeof(RoleTypeId))
+                .Cast<RoleTypeId>()
+                .First(r => r.ScpNumber() == scpNumber);
+        }
+
+        /// <summary>
+        /// Builds a "SCP-XXX" label colored with that SCP's own role color.
+        /// </summary>
+        public static string ColoredScpLabel(this RoleTypeId role)
+        {
+            string colorHex = role.GetColor().ToHex();
+            return $"<color={colorHex}>SCP-{role.ScpNumber()}</color>";
         }
     }
 }

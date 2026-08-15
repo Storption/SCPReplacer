@@ -1,5 +1,6 @@
 ﻿namespace SCPReplacer
 {
+    using Exiled.API.Extensions;
     using Exiled.API.Features;
     using Exiled.Events.EventArgs.Player;
     using PlayerRoles;
@@ -48,8 +49,9 @@
 
             ScpToReplace.Create(scpNumber);
 
-            Translation translation = Plugin.Instance.Translation;
-            string message = translation.BroadcastHeader + string.Format(translation.LotteryOpenedBroadcast, config.LotteryPeriodSeconds);
+            Translation translation = Plugin.Instance!.Translation;
+            string coloredScpLabel = player.Role.Type.ColoredScpLabel();
+            string message = translation.BroadcastHeader + string.Format(translation.LotteryOpenedBroadcast, coloredScpLabel, scpNumber, config.LotteryPeriodSeconds);
 
             Broadcast broadcastObj = new Broadcast(message, (ushort)config.LotteryPeriodSeconds);
             foreach (Player p in Player.List)

@@ -3,13 +3,14 @@
     using System;
     using CommandSystem;
     using Exiled.API.Enums;
+    using Exiled.API.Extensions;
     using Exiled.API.Features;
     using Exiled.CustomRoles.API;
     using Exiled.CustomRoles.API.Features;
     using PlayerRoles;
 
     /// <summary>
-    /// The .human command, letting and SCP voluntarily give up their role early for a random human class.
+    /// The .human command, letting an SCP voluntarily give up their role early for a random human class.
     /// </summary>
     [CommandHandler(typeof(ClientCommandHandler))]
     public class Human : ICommand
@@ -71,8 +72,10 @@
                 customRole.RemoveRole(player);
             player.DisableAllEffects();
 
-            Translation translation = Plugin.Instance.Translation;
-            response = string.Format(translation.HumanForfeitConfirmed, newRole);
+            Translation translation = Plugin.Instance!.Translation;
+            string roleColorHex = newRole.GetColor().ToHex();
+            string coloredRoleName = $"<color={roleColorHex}>{newRole}</color>";
+            response = string.Format(translation.HumanForfeitConfirmed, coloredRoleName);
 
             player.Broadcast(new Broadcast(translation.BroadcastHeader + response, 5));
 

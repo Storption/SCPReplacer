@@ -64,7 +64,8 @@
             role.StartLotteryIfNeeded();
 
             Translation translation = Plugin.Instance!.Translation;
-            response = string.Format(translation.VolunteerConfirmed, role.Name);
+            string coloredScpLabel = Util.FindScpRole(role.Name).ColoredScpLabel();
+            response = string.Format(translation.VolunteerConfirmed, coloredScpLabel);
 
             player.Broadcast(new Broadcast(
                 translation.BroadcastHeader + response,
