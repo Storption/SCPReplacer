@@ -11,6 +11,8 @@
     /// </summary>
     public class Plugin : Plugin<Config, Translation>
     {
+        private const string LegacyLotteryBroadcast = "{0} has left! Type .volunteer {1} within {2} seconds for a chance to take their place!";
+
         private EventHandlers? eventHandlers;
 
         /// <summary>
@@ -37,6 +39,11 @@
         public override void OnEnabled()
         {
             Instance = this;
+
+            Instance = this;
+
+            if (Translation.LotteryOpenedBroadcast == LegacyLotteryBroadcast)
+                Log.Warn("Translation file reset recommended: it still contains the pre-1.2.0 lottery message. Delete SCPReplacer's translation file (EXILED/Configs/Translations/SCPReplacer/<port>.yml) and restart to regenerate it with the updated text. If you use a single merged translations file, delete only the SCPReplacer section.");
 
             eventHandlers = new EventHandlers();
             PlayerHandlers.Left += eventHandlers.OnLeft;
