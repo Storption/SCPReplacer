@@ -47,21 +47,21 @@
             if (ScpToReplace.Find(scpNumber) is not null)
                 return;
 
-            ScpToReplace.Create(scpNumber);
-
-            Translation translation = Plugin.Instance!.Translation;
-            string coloredScpLabel = player.Role.Type.ColoredScpLabel();
-            string message = translation.BroadcastHeader + string.Format(translation.LotteryOpenedBroadcast, coloredScpLabel, scpNumber, config.LotteryPeriodSeconds);
-
-            Broadcast broadcastObj = new Broadcast(message, (ushort)config.LotteryPeriodSeconds);
-            foreach (Player p in Player.List)
-                p.Broadcast(broadcastObj);
+            ScpToReplace.Open(player.Role.Type, player.UserId);
         }
 
         /// <summary>
         /// Called when a new round starts.
         /// </summary>
         public void OnRoundStarted()
+        {
+            ScpToReplace.ClearAll();
+        }
+
+        /// <summary>
+        /// Called when the server returns to the lobby between rounds.
+        /// </summary>
+        public void OnWaitingForPlayers()
         {
             ScpToReplace.ClearAll();
         }

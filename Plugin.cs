@@ -2,6 +2,7 @@
 {
     using System;
     using Exiled.API.Features;
+    using SCPReplacer.Models;
     using PlayerHandlers = Exiled.Events.Handlers.Player;
     using ServerHandlers = Exiled.Events.Handlers.Server;
 
@@ -30,7 +31,7 @@
         public override Version RequiredExiledVersion { get; } = new Version(9, 14, 2);
 
         /// <inheritdoc/>
-        public override Version Version { get; } = new Version(1, 1, 0);
+        public override Version Version { get; } = new Version(1, 2, 0);
 
         /// <inheritdoc/>
         public override void OnEnabled()
@@ -40,6 +41,7 @@
             eventHandlers = new EventHandlers();
             PlayerHandlers.Left += eventHandlers.OnLeft;
             ServerHandlers.RoundStarted += eventHandlers.OnRoundStarted;
+            ServerHandlers.WaitingForPlayers += eventHandlers.OnWaitingForPlayers;
 
             Modules.AutoUpdate.RegisterEvents();
 
@@ -53,7 +55,10 @@
             {
                 PlayerHandlers.Left -= eventHandlers.OnLeft;
                 ServerHandlers.RoundStarted -= eventHandlers.OnRoundStarted;
+                ServerHandlers.WaitingForPlayers -= eventHandlers.OnWaitingForPlayers;
             }
+
+            ScpToReplace.ClearAll();
 
             Modules.AutoUpdate.UnregisterEvents();
 

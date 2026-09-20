@@ -8,6 +8,7 @@
     using Exiled.CustomRoles.API;
     using Exiled.CustomRoles.API.Features;
     using PlayerRoles;
+    using SCPReplacer.Models;
 
     /// <summary>
     /// The .human command, letting an SCP voluntarily give up their role early for a random human class.
@@ -28,35 +29,36 @@
         public bool Execute(ArraySegment<string> arguments, ICommandSender sender, out string response)
         {
             Config config = Plugin.Instance!.Config;
+            Translation translation = Plugin.Instance!.Translation;
 
             if (!config.HumanForfeitEnabled)
             {
-                response = "This command is currently disabled.";
+                response = translation.HumanDisabled;
                 return false;
             }
 
             if (Player.Get(sender) is not Player player)
             {
-                response = "You must be a player to use this command.";
+                response = translation.NotAPlayer;
                 return false;
             }
 
             if (!player.IsScp || player.Role == RoleTypeId.Scp0492)
             {
-                response = "You must be an SCP (other than SCP-049-2) to use this command.";
+                response = translation.HumanNotScp;
                 return false;
             }
 
             if (Round.ElapsedTime.TotalSeconds > config.QuitCutoffSeconds)
             {
-                response = "This command must be used closer to the start of the round.";
+                response = translation.HumanTooLate;
                 return false;
             }
 
             double requiredHealth = config.RequiredHealthPercent / 100.0 * player.MaxHealth;
             if (player.Health < requiredHealth)
             {
-                response = "You are too low on health to use this command.";
+                response = translation.HumanLowHealth;
                 return false;
             }
 
@@ -67,12 +69,19 @@
                 _ => RoleTypeId.FacilityGuard,
             };
 
-            player.Role.Set(newRole, SpawnReason.LateJoin, RoleSpawnFlags.All);
+            RoleTypeId formerRole = player.Role.Type;
+
             foreach (CustomRole customRole in player.GetCustomRoles())
                 customRole.RemoveRole(player);
-            player.DisableAllEffects();
 
-            Translation translation = Plugin.Instance!.Translation;
+            player.DisableAllEffects();
+            player.Role.Set(newRole, SpawnReason.LateJoin, RoleSpawnFlags.All);
+
+            ScpToReplace.Open(formerRole, player.UserId);
+
+            if (config.Debug)
+                Log.Debug($"{player.Nickname} forfeited {formerRole} and became {newRole}.");
+
             string roleColorHex = newRole.GetColor().ToHex();
             string coloredRoleName = $"<color={roleColorHex}>{newRole}</color>";
             response = string.Format(translation.HumanForfeitConfirmed, coloredRoleName);

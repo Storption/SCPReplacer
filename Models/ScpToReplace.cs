@@ -3,11 +3,11 @@
     using System;
     using System.Collections.Generic;
     using System.Linq;
-    using System.Threading.Tasks;
     using Exiled.API.Features;
     using Exiled.API.Enums;
     using Exiled.CustomRoles.API;
     using Exiled.CustomRoles.API.Features;
+    using MEC;
     using PlayerRoles;
 
     /// <summary>
@@ -17,9 +17,12 @@
     {
         private static readonly List<ScpToReplace> Pending = new();
 
-        private ScpToReplace(string scpName)
+        private CoroutineHandle timer;
+
+        private ScpToReplace(string scpName, string formerUserId)
         {
             Name = scpName;
+            FormerUserId = formerUserId;
             Volunteers = new List<Player>();
         }
 
@@ -29,14 +32,14 @@
         public string Name { get; }
 
         /// <summary>
+        /// Gets the user ID of the player who left or gave up this SCP, who can't volunteer for it again.
+        /// </summary>
+        public string FormerUserId { get; }
+
+        /// <summary>
         /// Gets the players who have volunteered so far.
         /// </summary>
         public List<Player> Volunteers { get; }
-
-        /// <summary>
-        /// Gets a value indicating whether the lottery countdown has already started.
-        /// </summary>
-        public bool LotteryStarted { get; private set; }
 
         /// <summary>
         /// Gets a value indicating whether anything is currently awaiting replacement.
@@ -53,38 +56,52 @@
         /// </summary>
         public static ScpToReplace? Find(string scpName)
         {
-            return Pending.FirstOrDefault(r => r.Name == scpName);
+            return Pending.FirstOrDefault(r => Util.SameScp(r.Name, scpName));
         }
 
         /// <summary>
         /// Registers a new SCP as awaiting replacement.
         /// </summary>
-        public static ScpToReplace Create(string scpName)
+        public static ScpToReplace Create(string scpName, string formerUserId)
         {
-            ScpToReplace role = new(scpName);
+            ScpToReplace role = new(scpName, formerUserId);
+            role.timer = Timing.CallDelayed(Plugin.Instance!.Config.LotteryPeriodSeconds, role.Resolve);
             Pending.Add(role);
             return role;
         }
 
         /// <summary>
-        /// Clears every pending replacement - called on round start.
+        /// Opens the volunteer lottery for a vacated SCP role and announces it to everyone.
         /// </summary>
-        public static void ClearAll()
+        public static void Open(RoleTypeId scpRole, string formerUserId)
         {
-            Pending.Clear();
+            string scpNumber = scpRole.ScpNumber();
+            if (Find(scpNumber) is not null)
+                return;
+
+            Create(scpNumber, formerUserId);
+
+            Config config = Plugin.Instance!.Config;
+            Translation translation = Plugin.Instance!.Translation;
+            string message = translation.BroadcastHeader + string.Format(translation.LotteryOpenedBroadcast, scpRole.ColoredScpLabel(), scpNumber, config.LotteryPeriodSeconds);
+
+            if (config.Debug)
+                Log.Debug($"Lottery opened for SCP-{scpNumber}, resolving in {config.LotteryPeriodSeconds}s.");
+
+            Broadcast broadcast = new(message, (ushort)config.LotteryPeriodSeconds);
+            foreach (Player p in Player.List)
+                p.Broadcast(broadcast);
         }
 
         /// <summary>
-        /// Starts the lottery countdown, if it hasn't already started. Called when the first player volunteers.
+        /// Cancels and clears every pending replacement - called on round start, when returning to the lobby, and when the plugin is disabled.
         /// </summary>
-        public async void StartLotteryIfNeeded()
+        public static void ClearAll()
         {
-            if (LotteryStarted)
-                return;
+            foreach (ScpToReplace role in Pending)
+                Timing.KillCoroutines(role.timer);
 
-            LotteryStarted = true;
-            await Task.Delay(TimeSpan.FromSeconds(Plugin.Instance!.Config.LotteryPeriodSeconds));
-            Resolve();
+            Pending.Clear();
         }
 
         private void Resolve()
@@ -92,28 +109,36 @@
             Pending.Remove(this);
 
             Player? chosen = Volunteers
-                .Where(p => p.IsAlive && !p.IsScp)
+                .Where(p => p.CanVolunteer())
                 .OrderBy(_ => Guid.NewGuid())
                 .FirstOrDefault();
 
+            Config config = Plugin.Instance!.Config;
             Translation translation = Plugin.Instance!.Translation;
 
             if (chosen is null)
             {
+                if (config.Debug)
+                    Log.Debug($"No eligible volunteers for SCP-{Name} ({Volunteers.Count} entered) - it will not be replaced.");
+
                 string noVolunteersMessage = translation.BroadcastHeader + translation.LotteryNoVolunteers;
                 foreach (Player p in Player.List)
                     p.Broadcast(new Broadcast(noVolunteersMessage, 5));
                 return;
             }
 
+            if (config.Debug)
+                Log.Debug($"{chosen.Nickname} won the lottery for SCP-{Name} out of {Volunteers.Count} volunteer(s).");
+
             RoleTypeId scpRole = Enum.GetValues(typeof(RoleTypeId))
                 .Cast<RoleTypeId>()
                 .First(r => r.ScpNumber() == Name);
 
-            chosen.Role.Set(scpRole, SpawnReason.LateJoin);
             foreach (CustomRole customRole in chosen.GetCustomRoles())
                 customRole.RemoveRole(chosen);
+
             chosen.DisableAllEffects();
+            chosen.Role.Set(scpRole, SpawnReason.LateJoin);
 
             string coloredScpLabel = scpRole.ColoredScpLabel();
 

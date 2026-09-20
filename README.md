@@ -9,11 +9,11 @@ Inspired by / based on the concept from [jmoore34/ScpReplacer](https://github.co
 [![Discord](https://img.shields.io/discord/1114170053949128817?style=for-the-badge&color=5865F2&logo=discord&label=Discord&logoColor=white)](https://join.storption.com)
 
 ## How it works
-If an SCP disconnects within a configurable time window at the start of the round, and had at least a configurable percentage of their health remaining, a broadcast opens a short lottery: any eligible player can type `.volunteer <number>` to enter. Once the lottery period ends, a random volunteer is chosen and takes over that SCP.
+If an SCP disconnects within a configurable time window at the start of the round, and had at least a configurable percentage of their health remaining, a broadcast opens a short lottery: any eligible player (spectators included) can type `.volunteer <number>` to enter, e.g. `.volunteer 49` or `.v 079`. The countdown starts as soon as the SCP leaves, and once it ends a random volunteer is chosen and takes over that SCP.
 
-Optionally, a separate command lets an SCP voluntarily give up their role early (for a random human class) instead of waiting to be replaced.
+Optionally, a separate command (`.human` / `.no`, disabled by default) lets an SCP voluntarily give up their role early for a random human class. Their SCP slot then goes through the same volunteer lottery.
 
-**Auto-update** - checks this plugin's own GitHub repo for a newer release, and if found, downloads and applies it automatically, restarting the server once the current round ends.
+**Auto-update** - checks this plugin's own GitHub repo for a newer release, and if found, downloads it, verifies it against the release's SHA-256, and applies it. If restarting is enabled, players are told in-game and the server restarts once the round ends.
 
 ## Requirements
 

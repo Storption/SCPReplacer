@@ -4,7 +4,6 @@
     using CommandSystem;
     using Exiled.API.Extensions;
     using Exiled.API.Features;
-    using PlayerRoles;
     using SCPReplacer.Models;
 
     /// <summary>
@@ -25,21 +24,23 @@
         /// <inheritdoc/>
         public bool Execute(ArraySegment<string> arguments, ICommandSender sender, out string response)
         {
+            Translation translation = Plugin.Instance!.Translation;
+
             if (arguments.Count != 1)
             {
-                response = "Usage: .volunteer <SCP number>. Example: .volunteer 079 or .v 079";
+                response = translation.VolunteerUsage;
                 return false;
             }
 
             if (Player.Get(sender) is not Player player)
             {
-                response = "You must be a player to use this command.";
+                response = translation.NotAPlayer;
                 return false;
             }
 
-            if (player.IsScp && player.Role != RoleTypeId.Scp0492)
+            if (!player.CanVolunteer())
             {
-                response = "SCPs cannot use this command.";
+                response = translation.VolunteerNotEligible;
                 return false;
             }
 
@@ -49,27 +50,32 @@
             if (role is null)
             {
                 response = ScpToReplace.AnyPending
-                    ? "That SCP isn't available. Currently available: " + string.Join(", ", ScpToReplace.PendingNames)
-                    : "No SCPs are currently eligible for replacement.";
+                    ? string.Format(translation.VolunteerUnavailable, string.Join(", ", ScpToReplace.PendingNames))
+                    : translation.VolunteerNoneEligible;
+                return false;
+            }
+
+            if (player.UserId == role.FormerUserId)
+            {
+                response = translation.VolunteerFormerHolder;
                 return false;
             }
 
             if (role.Volunteers.Contains(player))
             {
-                response = "You have already volunteered to replace this SCP.";
+                response = translation.VolunteerAlreadyEntered;
                 return false;
             }
 
             role.Volunteers.Add(player);
-            role.StartLotteryIfNeeded();
 
-            Translation translation = Plugin.Instance!.Translation;
+            if (Plugin.Instance.Config.Debug)
+                Log.Debug($"{player.Nickname} volunteered for SCP-{role.Name} ({role.Volunteers.Count} entered).");
+
             string coloredScpLabel = Util.FindScpRole(role.Name).ColoredScpLabel();
             response = string.Format(translation.VolunteerConfirmed, coloredScpLabel);
 
-            player.Broadcast(new Broadcast(
-                translation.BroadcastHeader + response,
-                5));
+            player.Broadcast(new Broadcast(translation.BroadcastHeader + response, 5));
 
             return true;
         }

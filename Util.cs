@@ -3,6 +3,7 @@
     using System;
     using System.Linq;
     using System.Text.RegularExpressions;
+    using Exiled.API.Features;
     using Exiled.API.Extensions;
     using PlayerRoles;
 
@@ -44,6 +45,25 @@
         {
             string colorHex = role.GetColor().ToHex();
             return $"<color={colorHex}>SCP-{role.ScpNumber()}</color>";
+        }
+
+        /// <summary>
+        /// Whether a player may enter, and be picked in, the replacement lottery. Spectators can, SCPs (other than SCP-049-2) and Overwatch can't.
+        /// </summary>
+        public static bool CanVolunteer(this Player player)
+        {
+            if (!player.IsConnected || player.Role.Type == RoleTypeId.Overwatch)
+                return false;
+
+            return !player.IsScp || player.Role.Type == RoleTypeId.Scp0492;
+        }
+
+        /// <summary>
+        /// Whether two SCP number strings refer to the same SCP, ignoring leading zeros (e.g. "49" and "049").
+        /// </summary>
+        public static bool SameScp(string first, string second)
+        {
+            return int.TryParse(first, out int firstNumber) && int.TryParse(second, out int secondNumber) && firstNumber == secondNumber;
         }
     }
 }
