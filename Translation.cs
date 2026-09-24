@@ -51,12 +51,6 @@
         public string ReplacementAnnouncement { get; set; } = "{0} has been replaced.";
 
         /// <summary>
-        /// Gets or sets the broadcast shown to everyone when a plugin update has been installed and the server will restart once the round ends.
-        /// </summary>
-        [Description("The broadcast shown to everyone when a plugin update has been installed and the server will restart once the round ends. {0} is the plugin's name. Leave empty to disable,")]
-        public string AutoUpdateRestartBroadcast { get; set; } = "<color=orange>[Update]</color> {0} was updated - the server will restart after this round to apply it.";
-
-        /// <summary>
         /// Gets or sets the response when a command is used from somewhere other than a player (e.g. the server console).
         /// </summary>
         [Description("The response when a command is used by something other than a player, such as the server console.")]
@@ -121,5 +115,11 @@
         /// </summary>
         [Description("The response when the player who left or gave up an SCP tries to volunteer for it again.")]
         public string VolunteerFormerHolder { get; set; } = "You gave up that SCP, so you can't volunteer for it.";
+
+        /// <summary>
+        /// Gets or sets the broadcast shown to everyone when a plugin update has been installed and the server will restart once the round ends.
+        /// </summary>
+        [Description("The broadcast shown to everyone when a plugin update has been installed and the server will restart once the round ends. {0} is the plugin's name. Leave empty to disable.")]
+        public string AutoUpdateRestartBroadcast { get; set; } = "<color=orange>[Update]</color> {0} was updated - the server will restart after this round to apply it.";
     }
 }

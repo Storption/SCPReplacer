@@ -19,17 +19,22 @@
 
         private CoroutineHandle timer;
 
-        private ScpToReplace(string scpName, string formerUserId)
+        private ScpToReplace(RoleTypeId role, string formerUserId)
         {
-            Name = scpName;
+            Role = role;
             FormerUserId = formerUserId;
             Volunteers = new List<Player>();
         }
 
         /// <summary>
+        /// Gets the SCP role this replacement is for.
+        /// </summary>
+        public RoleTypeId Role { get; }
+
+        /// <summary>
         /// Gets the SCP number this replacement is for (e.g. "079").
         /// </summary>
-        public string Name { get; }
+        public string Name => Role.ScpNumber();
 
         /// <summary>
         /// Gets the user ID of the player who left or gave up this SCP, who can't volunteer for it again.
@@ -62,12 +67,12 @@
         /// <summary>
         /// Registers a new SCP as awaiting replacement.
         /// </summary>
-        public static ScpToReplace Create(string scpName, string formerUserId)
+        public static ScpToReplace Create(RoleTypeId scpRole, string formerUserId)
         {
-            ScpToReplace role = new(scpName, formerUserId);
-            role.timer = Timing.CallDelayed(Plugin.Instance!.Config.LotteryPeriodSeconds, role.Resolve);
-            Pending.Add(role);
-            return role;
+            ScpToReplace replacement = new(scpRole, formerUserId);
+            replacement.timer = Timing.CallDelayed(Plugin.Instance!.Config.LotteryPeriodSeconds, replacement.Resolve);
+            Pending.Add(replacement);
+            return replacement;
         }
 
         /// <summary>
@@ -79,7 +84,7 @@
             if (Find(scpNumber) is not null)
                 return;
 
-            Create(scpNumber, formerUserId);
+            Create(scpRole, formerUserId);
 
             Config config = Plugin.Instance!.Config;
             Translation translation = Plugin.Instance!.Translation;
@@ -94,7 +99,7 @@
         }
 
         /// <summary>
-        /// Cancels and clears every pending replacement - called on round start, when returning to the lobby, and when the plugin is disabled.
+        /// Cancels and clears every pending replacement - called on round start and end, when returning to the lobby, and when the plugin is disabled.
         /// </summary>
         public static void ClearAll()
         {
@@ -130,17 +135,13 @@
             if (config.Debug)
                 Log.Debug($"{chosen.Nickname} won the lottery for SCP-{Name} out of {Volunteers.Count} volunteer(s).");
 
-            RoleTypeId scpRole = Enum.GetValues(typeof(RoleTypeId))
-                .Cast<RoleTypeId>()
-                .First(r => r.ScpNumber() == Name);
-
             foreach (CustomRole customRole in chosen.GetCustomRoles())
                 customRole.RemoveRole(chosen);
 
             chosen.DisableAllEffects();
-            chosen.Role.Set(scpRole, SpawnReason.LateJoin);
+            chosen.Role.Set(Role, SpawnReason.LateJoin);
 
-            string coloredScpLabel = scpRole.ColoredScpLabel();
+            string coloredScpLabel = Role.ColoredScpLabel();
 
             foreach (Player p in Player.List)
             {

@@ -1,6 +1,7 @@
 ﻿namespace SCPReplacer.Commands
 {
     using System;
+    using System.Text.RegularExpressions;
     using CommandSystem;
     using Exiled.API.Enums;
     using Exiled.API.Extensions;
@@ -83,7 +84,8 @@
                 Log.Debug($"{player.Nickname} forfeited {formerRole} and became {newRole}.");
 
             string roleColorHex = newRole.GetColor().ToHex();
-            string coloredRoleName = $"<color={roleColorHex}>{newRole}</color>";
+            string roleName = Regex.Replace(newRole.ToString(), "(?<=[a-z])(?=[A-Z])", " ");
+            string coloredRoleName = $"<color={roleColorHex}>{roleName}</color>";
             response = string.Format(translation.HumanForfeitConfirmed, coloredRoleName);
 
             player.Broadcast(new Broadcast(translation.BroadcastHeader + response, 5));

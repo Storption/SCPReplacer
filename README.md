@@ -1,7 +1,7 @@
 # SCPReplacer
 
 An [EXILED](https://github.com/ExMod-Team/EXILED) plugin for SCP: Secret Laboratory that lets players volunteer to take over an SCP role after the original player disconnects early in the round.
- 
+
 Inspired by / based on the concept from [jmoore34/ScpReplacer](https://github.com/jmoore34/ScpReplacer) — this is an independent rewrite, not a fork.
 
 [![Downloads](https://img.shields.io/github/downloads/Storption/SCPReplacer/total?style=for-the-badge&logo=github&color=blue)](https://github.com/Storption/SCPReplacer/releases/latest)
@@ -22,7 +22,7 @@ Optionally, a separate command (`.human` / `.no`, disabled by default) lets an S
 ## Installation
 
 1. Download the latest `SCPReplacer.dll` from the [Releases](https://github.com/Storption/SCPReplacer/releases) page.
-2. Place it in your server's EXILED plugins folder (`%AppData%\EXILED\Plugins` on Windows, `.config\EXILED\Plugins` on Linux).
+2. Place it in your server's EXILED plugins folder (`%AppData%\EXILED\Plugins` on Windows, `~/.config/EXILED/Plugins` on Linux).
 3. Restart your server. A default config will be generated on first load.
 
 ## Config

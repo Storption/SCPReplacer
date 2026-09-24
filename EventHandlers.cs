@@ -3,6 +3,7 @@
     using Exiled.API.Extensions;
     using Exiled.API.Features;
     using Exiled.Events.EventArgs.Player;
+    using Exiled.Events.EventArgs.Server;
     using PlayerRoles;
     using SCPReplacer.Models;
 
@@ -42,11 +43,6 @@
                 return;
             }
 
-            string scpNumber = player.Role.Type.ScpNumber();
-
-            if (ScpToReplace.Find(scpNumber) is not null)
-                return;
-
             ScpToReplace.Open(player.Role.Type, player.UserId);
         }
 
@@ -62,6 +58,14 @@
         /// Called when the server returns to the lobby between rounds.
         /// </summary>
         public void OnWaitingForPlayers()
+        {
+            ScpToReplace.ClearAll();
+        }
+
+        /// <summary>
+        /// Called when the round ends.
+        /// </summary>
+        public void OnRoundEnded(RoundEndedEventArgs ev)
         {
             ScpToReplace.ClearAll();
         }

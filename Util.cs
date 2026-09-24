@@ -29,16 +29,6 @@
         }
 
         /// <summary>
-        /// Finds the RoleTypeId matching a given SCP number string (e.g. "079" -> RoleTypeId.Scp079).
-        /// </summary>
-        public static RoleTypeId FindScpRole(string scpNumber)
-        {
-            return Enum.GetValues(typeof(RoleTypeId))
-                .Cast<RoleTypeId>()
-                .First(r => r.ScpNumber() == scpNumber);
-        }
-
-        /// <summary>
         /// Builds a "SCP-XXX" label colored with that SCP's own role color.
         /// </summary>
         public static string ColoredScpLabel(this RoleTypeId role)

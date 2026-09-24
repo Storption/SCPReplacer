@@ -33,13 +33,11 @@
         public override Version RequiredExiledVersion { get; } = new Version(9, 14, 2);
 
         /// <inheritdoc/>
-        public override Version Version { get; } = new Version(1, 2, 0);
+        public override Version Version { get; } = new Version(1, 2, 1);
 
         /// <inheritdoc/>
         public override void OnEnabled()
         {
-            Instance = this;
-
             Instance = this;
 
             if (Translation.LotteryOpenedBroadcast == LegacyLotteryBroadcast)
@@ -49,6 +47,7 @@
             PlayerHandlers.Left += eventHandlers.OnLeft;
             ServerHandlers.RoundStarted += eventHandlers.OnRoundStarted;
             ServerHandlers.WaitingForPlayers += eventHandlers.OnWaitingForPlayers;
+            ServerHandlers.RoundEnded += eventHandlers.OnRoundEnded;
 
             Modules.AutoUpdate.RegisterEvents();
 
@@ -63,6 +62,7 @@
                 PlayerHandlers.Left -= eventHandlers.OnLeft;
                 ServerHandlers.RoundStarted -= eventHandlers.OnRoundStarted;
                 ServerHandlers.WaitingForPlayers -= eventHandlers.OnWaitingForPlayers;
+                ServerHandlers.RoundEnded -= eventHandlers.OnRoundEnded;
             }
 
             ScpToReplace.ClearAll();

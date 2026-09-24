@@ -72,7 +72,7 @@
             if (Plugin.Instance.Config.Debug)
                 Log.Debug($"{player.Nickname} volunteered for SCP-{role.Name} ({role.Volunteers.Count} entered).");
 
-            string coloredScpLabel = Util.FindScpRole(role.Name).ColoredScpLabel();
+            string coloredScpLabel = role.Role.ColoredScpLabel();
             response = string.Format(translation.VolunteerConfirmed, coloredScpLabel);
 
             player.Broadcast(new Broadcast(translation.BroadcastHeader + response, 5));
