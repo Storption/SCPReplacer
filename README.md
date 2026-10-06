@@ -1,12 +1,16 @@
-# SCPReplacer
+<p align="center"><img src="logo.svg" width="160" alt="SCPReplacer logo"></p>
+
+<h1 align="center">SCPReplacer</h1>
+
+<p align="center">
+  <a href="https://github.com/Storption/SCPReplacer/releases/latest"><img src="https://img.shields.io/github/downloads/Storption/SCPReplacer/total?style=for-the-badge&logo=github&color=blue" alt="Downloads"></a>
+  <a href="https://github.com/Storption/SCPReplacer/releases/latest"><img src="https://img.shields.io/github/v/release/Storption/SCPReplacer?include_prereleases&style=for-the-badge&logo=github&label=Latest%20Release&color=green" alt="Latest release"></a>
+  <a href="https://join.storption.com"><img src="https://img.shields.io/discord/1114170053949128817?style=for-the-badge&color=5865F2&logo=discord&label=Discord&logoColor=white" alt="Discord"></a>
+</p>
 
 An [EXILED](https://github.com/ExMod-Team/EXILED) plugin for SCP: Secret Laboratory that lets players volunteer to take over an SCP role after the original player disconnects early in the round.
 
 Inspired by / based on the concept from [jmoore34/ScpReplacer](https://github.com/jmoore34/ScpReplacer) — this is an independent rewrite, not a fork.
-
-[![Downloads](https://img.shields.io/github/downloads/Storption/SCPReplacer/total?style=for-the-badge&logo=github&color=blue)](https://github.com/Storption/SCPReplacer/releases/latest)
-[![Latest](https://img.shields.io/github/v/release/Storption/SCPReplacer?include_prereleases&style=for-the-badge&logo=github&label=Latest%20Release&color=green)](https://github.com/Storption/SCPReplacer/releases/latest)
-[![Discord](https://img.shields.io/discord/1114170053949128817?style=for-the-badge&color=5865F2&logo=discord&label=Discord&logoColor=white)](https://join.storption.com)
 
 ## How it works
 If an SCP disconnects within a configurable time window at the start of the round, and had at least a configurable percentage of their health remaining, a broadcast opens a short lottery: any eligible player (spectators included) can type `.volunteer <number>` to enter, e.g. `.volunteer 49` or `.v 079`. The countdown starts as soon as the SCP leaves, and once it ends a random volunteer is chosen and takes over that SCP.
