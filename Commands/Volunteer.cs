@@ -44,8 +44,7 @@
                 return false;
             }
 
-            string requestedScp = arguments.FirstElement().ScpNumber();
-            ScpToReplace? role = ScpToReplace.Find(requestedScp);
+            ScpToReplace? role = ScpToReplace.Find(arguments.FirstElement());
 
             if (role is null)
             {
@@ -70,9 +69,9 @@
             role.Volunteers.Add(player);
 
             if (Plugin.Instance.Config.Debug)
-                Log.Debug($"{player.Nickname} volunteered for SCP-{role.Name} ({role.Volunteers.Count} entered).");
+                Log.Debug($"{player.Nickname} volunteered for {role.Name} ({role.Volunteers.Count} entered).");
 
-            string coloredScpLabel = role.Role.ColoredScpLabel();
+            string coloredScpLabel = role.Label;
             response = string.Format(translation.VolunteerConfirmed, coloredScpLabel);
 
             player.Broadcast(new Broadcast(translation.BroadcastHeader + response, 5));

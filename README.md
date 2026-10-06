@@ -15,6 +15,8 @@ Inspired by / based on the concept from [jmoore34/ScpReplacer](https://github.co
 ## How it works
 If an SCP disconnects within a configurable time window at the start of the round, and had at least a configurable percentage of their health remaining, a broadcast opens a short lottery: any eligible player (spectators included) can type `.volunteer <number>` to enter, e.g. `.volunteer 49` or `.v 079`. The countdown starts as soon as the SCP leaves, and once it ends a random volunteer is chosen and takes over that SCP.
 
+**Custom SCPs** - SCP roles from [UncomplicatedCustomRoles](https://github.com/UncomplicatedCustomServer/UncomplicatedCustomRoles) and EXILED's CustomRoles are replaced as themselves: the lottery is for e.g. "SCP-939-53" (`.volunteer 939-53`), the winner becomes that custom SCP, and takes over where it left. Custom roles built on a zombie (SCP-049-2) only get a lottery if they're listed in `custom_zombie_scps` (SCP-008 by default), so custom zombie variants stay as replaceable as normal zombies. Other plugins can add their own through the API below.
+
 Optionally, a separate command (`.human` / `.no`, disabled by default) lets an SCP voluntarily give up their role early for a random human class. Their SCP slot then goes through the same volunteer lottery.
 
 **Auto-update** - checks this plugin's own GitHub repo for a newer release, and if found, downloads it, verifies it against the release's SHA-256, and applies it. If restarting is enabled, players are told in-game and the server restarts once the round ends.
@@ -44,6 +46,13 @@ required_health_percent: 100
 lottery_period_seconds: 15
 # Whether the .human/.no forfeit command is enabled at all.
 human_forfeit_enabled: false
+# Whether SCP roles from UncomplicatedCustomRoles (if installed) are offered in the lottery as themselves, and given to the winner.
+uncomplicated_custom_roles_support: true
+# Whether SCP roles from EXILED's CustomRoles are offered in the lottery as themselves, and given to the winner.
+exiled_custom_roles_support: true
+# Custom roles built on SCP-049-2 that count as full SCPs and get a lottery, by name. Other custom zombies are left alone, like normal zombies.
+custom_zombie_scps:
+- SCP-008
 # Whether to check for and automatically install updates.
 auto_update_enabled: true
 # Whether to keep a backup of the previous .dll before replacing it with an update.
@@ -53,3 +62,22 @@ auto_update_restart: true
 ```
 
 All broadcast and message text, including the header shown on every plugin broadcast, is configurable via the generated translation file.
+
+## For plugin developers
+
+Plugins with their own custom SCPs can have them replaced as themselves. Register a provider that recognises your SCPs; it's asked when an SCP leaves or forfeits, before their role changes.
+
+```csharp
+using SCPReplacer.API;
+
+CustomScp? GetMyScp(Player player) => IsMyScp(player)
+    ? new CustomScp("SCP-1234", RoleTypeId.Scp939, winner => MakeMyScp(winner))
+    : null;
+
+CustomScps.RegisterProvider(GetMyScp);   // in OnEnabled
+CustomScps.UnregisterProvider(GetMyScp); // in OnDisabled
+```
+
+- `Name` is shown in broadcasts, and players volunteer with it, with or without the "SCP-" prefix (`.volunteer 1234`).
+- The winner is set to `BaseRole`, your `Apply` action runs, then they're moved to where the SCP left. Exceptions from providers or `Apply` are logged and never stop the lottery.
+- Available from v1.3.0. To make SCPReplacer optional, reference `SCPReplacer.dll` without copying it, keep every call to `SCPReplacer.API` in one class of its own, and only call that class when `Exiled.Loader.Loader.Plugins` contains SCPReplacer v1.3.0 or later.

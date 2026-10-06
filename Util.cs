@@ -13,14 +13,6 @@
     public static class Util
     {
         /// <summary>
-        /// Strips everything except digits from user-typed input (e.g. "SCP-079" becomes "079").
-        /// </summary>
-        public static string ScpNumber(this string input)
-        {
-            return Regex.Replace(input, "[^0-9]", string.Empty);
-        }
-
-        /// <summary>
         /// Gets the SCP number for a given role type (e.g. RoleTypeId.Scp079 becomes "079").
         /// </summary>
         public static string ScpNumber(this RoleTypeId role)
@@ -49,11 +41,21 @@
         }
 
         /// <summary>
-        /// Whether two SCP number strings refer to the same SCP, ignoring leading zeros (e.g. "49" and "049").
+        /// Removes a leading "SCP" or "SCP-" from a name, so "SCP-939-53" becomes "939-53".
+        /// </summary>
+        public static string StripScpPrefix(string name) => Regex.Replace(name.Trim(), "^scp[-_ ]?", string.Empty, RegexOptions.IgnoreCase);
+
+        /// <summary>
+        /// Gets whether two SCP names match, loosely: case, an "SCP" prefix and separators don't matter ("scp-939-53" matches "93953"),
+        /// and numbers compare as numbers, so "49" matches "049".
         /// </summary>
         public static bool SameScp(string first, string second)
         {
-            return int.TryParse(first, out int firstNumber) && int.TryParse(second, out int secondNumber) && firstNumber == secondNumber;
+            string a = Normalize(first);
+            string b = Normalize(second);
+            return a.Length > 0 && (a == b || (int.TryParse(a, out int x) && int.TryParse(b, out int y) && x == y));
         }
+
+        private static string Normalize(string name) => Regex.Replace(StripScpPrefix(name), "[^0-9A-Za-z]", string.Empty).ToLowerInvariant();
     }
 }

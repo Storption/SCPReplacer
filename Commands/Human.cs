@@ -9,7 +9,9 @@
     using Exiled.CustomRoles.API;
     using Exiled.CustomRoles.API.Features;
     using PlayerRoles;
+    using SCPReplacer.API;
     using SCPReplacer.Models;
+    using UnityEngine;
 
     /// <summary>
     /// The .human command, letting an SCP voluntarily give up their role early for a random human class.
@@ -44,7 +46,8 @@
                 return false;
             }
 
-            if (!player.IsScp || player.Role == RoleTypeId.Scp0492)
+            CustomScp? custom = CustomScps.GetReplaceable(player);
+            if (custom is null && (!player.IsScp || player.Role == RoleTypeId.Scp0492))
             {
                 response = translation.HumanNotScp;
                 return false;
@@ -72,16 +75,17 @@
 
             RoleTypeId formerRole = player.Role.Type;
 
+            Vector3 position = player.Position;
             foreach (CustomRole customRole in player.GetCustomRoles())
                 customRole.RemoveRole(player);
 
             player.DisableAllEffects();
             player.Role.Set(newRole, SpawnReason.LateJoin, RoleSpawnFlags.All);
 
-            ScpToReplace.Open(formerRole, player.UserId);
+            ScpToReplace.Open(custom?.BaseRole ?? formerRole, custom, player.UserId, position);
 
             if (config.Debug)
-                Log.Debug($"{player.Nickname} forfeited {formerRole} and became {newRole}.");
+                Log.Debug($"{player.Nickname} forfeited {custom?.Name ?? formerRole.ToString()} and became {newRole}.");
 
             string roleColorHex = newRole.GetColor().ToHex();
             string roleName = Regex.Replace(newRole.ToString(), "(?<=[a-z])(?=[A-Z])", " ");

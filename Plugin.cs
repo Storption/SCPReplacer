@@ -2,6 +2,8 @@
 {
     using System;
     using Exiled.API.Features;
+    using SCPReplacer.API;
+    using SCPReplacer.Integrations;
     using SCPReplacer.Models;
     using PlayerHandlers = Exiled.Events.Handlers.Player;
     using ServerHandlers = Exiled.Events.Handlers.Server;
@@ -33,7 +35,7 @@
         public override Version RequiredExiledVersion { get; } = new Version(9, 14, 2);
 
         /// <inheritdoc/>
-        public override Version Version { get; } = new Version(1, 2, 1);
+        public override Version Version { get; } = new Version(1, 3, 0);
 
         /// <inheritdoc/>
         public override void OnEnabled()
@@ -48,6 +50,12 @@
             ServerHandlers.RoundStarted += eventHandlers.OnRoundStarted;
             ServerHandlers.WaitingForPlayers += eventHandlers.OnWaitingForPlayers;
             ServerHandlers.RoundEnded += eventHandlers.OnRoundEnded;
+
+            if (Config.UncomplicatedCustomRolesSupport && UcrScps.TryResolve())
+                CustomScps.RegisterProvider(UcrScps.Get);
+
+            if (Config.ExiledCustomRolesSupport)
+                CustomScps.RegisterProvider(ExiledScps.Get);
 
             Modules.AutoUpdate.RegisterEvents();
 
@@ -66,6 +74,9 @@
             }
 
             ScpToReplace.ClearAll();
+
+            CustomScps.UnregisterProvider(UcrScps.Get);
+            CustomScps.UnregisterProvider(ExiledScps.Get);
 
             Modules.AutoUpdate.UnregisterEvents();
 

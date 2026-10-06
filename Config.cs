@@ -41,6 +41,24 @@
         public bool HumanForfeitEnabled { get; set; } = false;
 
         /// <summary>
+        /// Gets or sets a value indicating whether UncomplicatedCustomRoles SCPs are replaced as themselves.
+        /// </summary>
+        [Description("Whether SCP roles from UncomplicatedCustomRoles (if installed) are offered in the lottery as themselves, and given to the winner.")]
+        public bool UncomplicatedCustomRolesSupport { get; set; } = true;
+
+        /// <summary>
+        /// Gets or sets a value indicating whether EXILED CustomRoles SCPs are replaced as themselves.
+        /// </summary>
+        [Description("Whether SCP roles from EXILED's CustomRoles are offered in the lottery as themselves, and given to the winner.")]
+        public bool ExiledCustomRolesSupport { get; set; } = true;
+
+        /// <summary>
+        /// Gets or sets the custom roles built on SCP-049-2 that are replaced like a full SCP.
+        /// </summary>
+        [Description("Custom roles built on SCP-049-2 that count as full SCPs and get a lottery, by name. Other custom zombies are left alone, like normal zombies.")]
+        public List<string> CustomZombieScps { get; set; } = new() { "SCP-008" };
+
+        /// <summary>
         /// Gets or sets whether to check for and automatically install updates.
         /// </summary>
         [Description("Whether to check for and automatically install updates.")]

@@ -5,6 +5,7 @@
     using Exiled.Events.EventArgs.Player;
     using Exiled.Events.EventArgs.Server;
     using PlayerRoles;
+    using SCPReplacer.API;
     using SCPReplacer.Models;
 
     /// <summary>
@@ -18,8 +19,10 @@
         public void OnLeft(LeftEventArgs ev)
         {
             Player player = ev.Player;
+            CustomScp? custom = CustomScps.GetReplaceable(player);
 
-            if (!player.IsScp || player.Role == RoleTypeId.Scp0492)
+            // Zombies are never replaced, unless they're a custom zombie listed in custom_zombie_scps.
+            if (custom is null && (!player.IsScp || player.Role == RoleTypeId.Scp0492))
                 return;
 
             Config config = Plugin.Instance!.Config;
@@ -27,7 +30,7 @@
             double requiredHealth = config.RequiredHealthPercent / 100.0 * player.MaxHealth;
 
             if (config.Debug)
-                Log.Debug($"{player.Nickname} left {elapsedSeconds:F1}s into the round as {player.Role}, with {player.Health}/{player.MaxHealth} HP ({requiredHealth:F1} required).");
+                Log.Debug($"{player.Nickname} left {elapsedSeconds:F1}s into the round as {custom?.Name ?? player.Role.ToString()}, with {player.Health}/{player.MaxHealth} HP ({requiredHealth:F1} required).");
 
             if (elapsedSeconds > config.QuitCutoffSeconds)
             {
@@ -43,7 +46,7 @@
                 return;
             }
 
-            ScpToReplace.Open(player.Role.Type, player.UserId);
+            ScpToReplace.Open(custom?.BaseRole ?? player.Role.Type, custom, player.UserId, player.Position);
         }
 
         /// <summary>
