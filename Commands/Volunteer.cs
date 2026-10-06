@@ -16,7 +16,7 @@
         public string Command => "volunteer";
 
         /// <inheritdoc/>
-        public string[] Aliases { get; set; } = { "v" };
+        public string[] Aliases { get; } = { "v" };
 
         /// <inheritdoc/>
         public string Description => "Volunteer to become an SCP that left at the start of the round.";
