@@ -13,22 +13,15 @@
     using SCPReplacer.Models;
     using UnityEngine;
 
-    /// <summary>
-    /// The .human command, letting an SCP voluntarily give up their role early for a random human class.
-    /// </summary>
     [CommandHandler(typeof(ClientCommandHandler))]
     public class Human : ICommand
     {
-        /// <inheritdoc/>
         public string Command => "human";
 
-        /// <inheritdoc/>
         public string[] Aliases { get; } = { "no" };
 
-        /// <inheritdoc/>
         public string Description => "Forfeit being an SCP and become a random human class instead.";
 
-        /// <inheritdoc/>
         public bool Execute(ArraySegment<string> arguments, ICommandSender sender, out string response)
         {
             Config config = Plugin.Instance!.Config;
@@ -37,6 +30,12 @@
             if (!config.HumanForfeitEnabled)
             {
                 response = translation.HumanDisabled;
+                return false;
+            }
+
+            if (Replacement.Paused)
+            {
+                response = translation.HumanPaused;
                 return false;
             }
 
@@ -84,8 +83,7 @@
 
             ScpToReplace.Open(custom?.BaseRole ?? formerRole, custom, player.UserId, position);
 
-            if (config.Debug)
-                Log.Debug($"{player.Nickname} forfeited {custom?.Name ?? formerRole.ToString()} and became {newRole}.");
+            Log.Debug($"{player.Nickname} forfeited {custom?.Name ?? formerRole.ToString()} and became {newRole}.");
 
             string roleColorHex = newRole.GetColor().ToHex();
             string roleName = Regex.Replace(newRole.ToString(), "(?<=[a-z])(?=[A-Z])", " ");

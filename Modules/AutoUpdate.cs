@@ -223,7 +223,7 @@
             return Version.TryParse(cleaned, out version);
         }
 
-        // Null when the file can't be read, so the update goes ahead as before.
+        // Null when the file can't be read, so the update still goes ahead.
         private static string? GetInstalledSha256()
         {
             try

@@ -1,9 +1,9 @@
 ﻿namespace SCPReplacer.API
 {
-    using Exiled.API.Features;
-    using PlayerRoles;
     using System;
     using System.Collections.Generic;
+    using Exiled.API.Features;
+    using PlayerRoles;
 
     /// <summary>
     /// Lets other plugins tell SCPReplacer about their custom SCPs.

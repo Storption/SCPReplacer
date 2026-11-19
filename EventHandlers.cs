@@ -8,16 +8,13 @@
     using SCPReplacer.API;
     using SCPReplacer.Models;
 
-    /// <summary>
-    /// Handles the plugin's game event subscriptions.
-    /// </summary>
-    public class EventHandlers
+    internal class EventHandlers
     {
-        /// <summary>
-        /// Called when a player leaves the server.
-        /// </summary>
         public void OnLeft(LeftEventArgs ev)
         {
+            if (Replacement.Paused)
+                return;
+
             Player player = ev.Player;
             CustomScp? custom = CustomScps.GetReplaceable(player);
 
@@ -29,48 +26,23 @@
             double elapsedSeconds = Round.ElapsedTime.TotalSeconds;
             double requiredHealth = config.RequiredHealthPercent / 100.0 * player.MaxHealth;
 
-            if (config.Debug)
-                Log.Debug($"{player.Nickname} left {elapsedSeconds:F1}s into the round as {custom?.Name ?? player.Role.ToString()}, with {player.Health}/{player.MaxHealth} HP ({requiredHealth:F1} required).");
+            Log.Debug($"{player.Nickname} left {elapsedSeconds:F1}s into the round as {custom?.Name ?? player.Role.ToString()}, with {player.Health}/{player.MaxHealth} HP ({requiredHealth:F1} required).");
 
             if (elapsedSeconds > config.QuitCutoffSeconds)
             {
-                if (config.Debug)
-                    Log.Debug("Not eligible - quit cutoff already passed.");
+                Log.Debug("Not eligible - quit cutoff already passed.");
                 return;
             }
 
             if (player.Health < requiredHealth)
             {
-                if (config.Debug)
-                    Log.Debug("Not eligible - health too low.");
+                Log.Debug("Not eligible - health too low.");
                 return;
             }
 
             ScpToReplace.Open(custom?.BaseRole ?? player.Role.Type, custom, player.UserId, player.Position);
         }
 
-        /// <summary>
-        /// Called when a new round starts.
-        /// </summary>
-        public void OnRoundStarted()
-        {
-            ScpToReplace.ClearAll();
-        }
-
-        /// <summary>
-        /// Called when the server returns to the lobby between rounds.
-        /// </summary>
-        public void OnWaitingForPlayers()
-        {
-            ScpToReplace.ClearAll();
-        }
-
-        /// <summary>
-        /// Called when the round ends.
-        /// </summary>
-        public void OnRoundEnded(RoundEndedEventArgs ev)
-        {
-            ScpToReplace.ClearAll();
-        }
+        public void OnRoundEnded(RoundEndedEventArgs ev) => ScpToReplace.ClearAll();
     }
 }

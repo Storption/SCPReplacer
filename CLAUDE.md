@@ -2,7 +2,7 @@
 
 Lets players volunteer via `.volunteer <number>` to take over an SCP role within a time window after the original player disconnects, provided the SCP had enough health remaining. A separate `.human` command optionally lets an SCP forfeit their role early for a random human class.
 
-Current version: **v1.3.0**. Independent rewrite (not a fork) of the concept from [jmoore34/ScpReplacer](https://github.com/jmoore34/ScpReplacer) — the original plugin this was based on was old and broken, rewritten from scratch rather than patched.
+Current version: **v1.4.0**. Independent rewrite (not a fork) of the concept from [jmoore34/ScpReplacer](https://github.com/jmoore34/ScpReplacer) — the original plugin this was based on was old and broken, rewritten from scratch rather than patched.
 
 See `../CLAUDE.md` for shared plugin conventions and the `AutoUpdate` module design.
 
@@ -11,7 +11,7 @@ See `../CLAUDE.md` for shared plugin conventions and the `AutoUpdate` module des
 - `Plugin.cs`, `Config.cs`, `Translation.cs`, `Util.cs`, `EventHandlers.cs`
 - `Commands/` — `Volunteer.cs`, `Human.cs`
 - `Models/` — `ScpToReplace.cs` (the lottery itself)
-- `API/` — the public custom SCP API (`CustomScp`, `CustomScps`). A contract: don't rename or change anything public in it without a major version.
+- `API/` — the public API: custom SCPs (`CustomScp`, `CustomScps`) and `Replacement.Paused` (no lottery opens and `.human` is refused while it's true; ZFFGames sets it during its modes). A contract: don't rename or change anything public in it without a major version.
 - `Integrations/` — built-in providers: `UcrScps.cs` (UncomplicatedCustomRoles, by reflection) and `ExiledScps.cs` (EXILED CustomRoles).
 - `Modules/AutoUpdate.cs` — the shared module, see `../CLAUDE.md`
 

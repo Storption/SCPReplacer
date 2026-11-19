@@ -13,10 +13,7 @@
     using SCPReplacer.API;
     using UnityEngine;
 
-    /// <summary>
-    /// An SCP that left or was given up, open for volunteers until its lottery resolves.
-    /// </summary>
-    public class ScpToReplace
+    internal class ScpToReplace
     {
         private static readonly List<ScpToReplace> Pending = new();
 
@@ -32,59 +29,26 @@
             Label = custom is null ? role.ColoredScpLabel() : $"<color={custom.BaseRole.GetColor().ToHex()}>{custom.Name}</color>";
         }
 
-        /// <summary>
-        /// Gets the vanilla role that left, or a custom SCP's base role.
-        /// </summary>
         public RoleTypeId Role { get; }
 
-        /// <summary>
-        /// Gets the custom SCP that left, or null for a vanilla one.
-        /// </summary>
         public CustomScp? Custom { get; }
 
-        /// <summary>
-        /// Gets what players type after .volunteer: the SCP number, or a custom SCP's name without its "SCP-" prefix.
-        /// </summary>
         public string Name { get; }
 
-        /// <summary>
-        /// Gets the colored name shown in broadcasts.
-        /// </summary>
         public string Label { get; }
 
-        /// <summary>
-        /// Gets the user ID of the player who left or gave up the SCP.
-        /// </summary>
         public string FormerUserId { get; }
 
-        /// <summary>
-        /// Gets where the SCP was when it left. A custom SCP's replacement takes over there.
-        /// </summary>
         public Vector3 Position { get; }
 
-        /// <summary>
-        /// Gets the players who volunteered.
-        /// </summary>
         public List<Player> Volunteers { get; } = new();
 
-        /// <summary>
-        /// Gets a value indicating whether any lottery is open.
-        /// </summary>
         public static bool AnyPending => Pending.Count > 0;
 
-        /// <summary>
-        /// Gets the names of the SCPs with an open lottery.
-        /// </summary>
         public static IEnumerable<string> PendingNames => Pending.Select(r => r.Name);
 
-        /// <summary>
-        /// Finds an open lottery by the name a player typed.
-        /// </summary>
         public static ScpToReplace? Find(string name) => Pending.FirstOrDefault(r => Util.SameScp(r.Name, name));
 
-        /// <summary>
-        /// Opens a lottery for an SCP that left or was given up, unless one for it is already open.
-        /// </summary>
         public static void Open(RoleTypeId role, CustomScp? custom, string formerUserId, Vector3 position)
         {
             ScpToReplace replacement = new(role, custom, formerUserId, position);
@@ -97,8 +61,7 @@
             replacement.timer = Timing.CallDelayed(config.LotteryPeriodSeconds, replacement.Resolve);
             Pending.Add(replacement);
 
-            if (config.Debug)
-                Log.Debug($"Lottery opened for {replacement.Name}{(custom is null ? string.Empty : $" (custom, base {custom.BaseRole})")}, resolving in {config.LotteryPeriodSeconds}s.");
+            Log.Debug($"Lottery opened for {replacement.Name}{(custom is null ? string.Empty : $" (custom, base {custom.BaseRole})")}, resolving in {config.LotteryPeriodSeconds}s.");
 
             string message = translation.BroadcastHeader + string.Format(translation.LotteryOpenedBroadcast, replacement.Label, replacement.Name, config.LotteryPeriodSeconds);
             Broadcast broadcast = new(message, (ushort)config.LotteryPeriodSeconds);
@@ -106,9 +69,6 @@
                 p.Broadcast(broadcast);
         }
 
-        /// <summary>
-        /// Cancels every open lottery.
-        /// </summary>
         public static void ClearAll()
         {
             foreach (ScpToReplace role in Pending)
@@ -126,13 +86,11 @@
                 .OrderBy(_ => Guid.NewGuid())
                 .FirstOrDefault();
 
-            Config config = Plugin.Instance!.Config;
             Translation translation = Plugin.Instance!.Translation;
 
             if (chosen is null)
             {
-                if (config.Debug)
-                    Log.Debug($"No eligible volunteers for {Name} ({Volunteers.Count} entered) - it will not be replaced.");
+                Log.Debug($"No eligible volunteers for {Name} ({Volunteers.Count} entered) - it will not be replaced.");
 
                 string noVolunteersMessage = translation.BroadcastHeader + translation.LotteryNoVolunteers;
                 foreach (Player p in Player.List)
@@ -140,8 +98,7 @@
                 return;
             }
 
-            if (config.Debug)
-                Log.Debug($"{chosen.Nickname} won the lottery for {Name} out of {Volunteers.Count} volunteer(s).");
+            Log.Debug($"{chosen.Nickname} won the lottery for {Name} out of {Volunteers.Count} volunteer(s).");
 
             foreach (CustomRole customRole in chosen.GetCustomRoles())
                 customRole.RemoveRole(chosen);

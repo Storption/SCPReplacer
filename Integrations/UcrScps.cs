@@ -8,9 +8,6 @@
     using SCPReplacer.API;
     using LabApiPlayer = LabApi.Features.Wrappers.Player;
 
-    /// <summary>
-    /// Offers UncomplicatedCustomRoles SCPs in the lottery. UCR is reached through reflection, so it stays optional.
-    /// </summary>
     internal static class UcrScps
     {
         private static MethodInfo? tryGet;
@@ -19,9 +16,6 @@
         private static PropertyInfo? roleName;
         private static PropertyInfo? baseRole;
 
-        /// <summary>
-        /// Finds UCR's API, if UCR is installed.
-        /// </summary>
         public static bool TryResolve()
         {
             Assembly? assembly = AppDomain.CurrentDomain.GetAssemblies().FirstOrDefault(a => a.GetName().Name == "UncomplicatedCustomRoles");
@@ -39,9 +33,6 @@
             return tryGet is not null && summon is not null && summonedRole is not null && roleName is not null && baseRole is not null;
         }
 
-        /// <summary>
-        /// Gets the UCR SCP a player is, or null if they aren't one.
-        /// </summary>
         public static CustomScp? Get(Player player)
         {
             object?[] args = { player.ReferenceHub, null };

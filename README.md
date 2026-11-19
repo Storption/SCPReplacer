@@ -80,4 +80,14 @@ CustomScps.UnregisterProvider(GetMyScp); // in OnDisabled
 
 - `Name` is shown in broadcasts, and players volunteer with it, with or without the "SCP-" prefix (`.volunteer 1234`).
 - The winner is set to `BaseRole`, your `Apply` action runs, then they're moved to where the SCP left. Exceptions from providers or `Apply` are logged and never stop the lottery.
-- Available from v1.3.0. To make SCPReplacer optional, reference `SCPReplacer.dll` without copying it, keep every call to `SCPReplacer.API` in one class of its own, and only call that class when `Exiled.Loader.Loader.Plugins` contains SCPReplacer v1.3.0 or later.
+- Available from v1.3.0.
+
+Plugins that run their own rounds, like minigames where SCPs aren't the usual SCPs, can switch replacements off for a while:
+
+```csharp
+Replacement.Paused = true;  // no lottery opens when an SCP leaves, and .human is refused
+Replacement.Paused = false; // back to normal
+```
+
+- Lotteries already open carry on. Available from v1.4.0.
+- To make SCPReplacer optional, reference `SCPReplacer.dll` without copying it, keep every call to `SCPReplacer.API` in one class of its own, and only call that class when `Exiled.Loader.Loader.Plugins` contains SCPReplacer v1.3.0 or later (v1.4.0 for `Replacement`).

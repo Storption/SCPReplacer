@@ -8,36 +8,24 @@
     using PlayerHandlers = Exiled.Events.Handlers.Player;
     using ServerHandlers = Exiled.Events.Handlers.Server;
 
-    /// <summary>
-    /// The main plugin class.
-    /// </summary>
     public class Plugin : Plugin<Config, Translation>
     {
         private const string LegacyLotteryBroadcast = "{0} has left! Type .volunteer {1} within {2} seconds for a chance to take their place!";
 
         private EventHandlers? eventHandlers;
 
-        /// <summary>
-        /// Gets the only existing instance of the <see cref="Plugin"/> class.
-        /// </summary>
         public static Plugin? Instance { get; private set; }
 
-        /// <inheritdoc/>
         public override string Author => "Storption";
 
-        /// <inheritdoc/>
         public override string Name => "SCPReplacer";
 
-        /// <inheritdoc/>
         public override string Prefix => "SCPReplacer";
 
-        /// <inheritdoc/>
         public override Version RequiredExiledVersion { get; } = new Version(9, 14, 2);
 
-        /// <inheritdoc/>
-        public override Version Version { get; } = new Version(1, 3, 0);
+        public override Version Version { get; } = new Version(1, 4, 0);
 
-        /// <inheritdoc/>
         public override void OnEnabled()
         {
             Instance = this;
@@ -47,8 +35,8 @@
 
             eventHandlers = new EventHandlers();
             PlayerHandlers.Left += eventHandlers.OnLeft;
-            ServerHandlers.RoundStarted += eventHandlers.OnRoundStarted;
-            ServerHandlers.WaitingForPlayers += eventHandlers.OnWaitingForPlayers;
+            ServerHandlers.RoundStarted += ScpToReplace.ClearAll;
+            ServerHandlers.WaitingForPlayers += ScpToReplace.ClearAll;
             ServerHandlers.RoundEnded += eventHandlers.OnRoundEnded;
 
             if (Config.UncomplicatedCustomRolesSupport && UcrScps.TryResolve())
@@ -62,16 +50,16 @@
             base.OnEnabled();
         }
 
-        /// <inheritdoc/>
         public override void OnDisabled()
         {
             if (eventHandlers is not null)
             {
                 PlayerHandlers.Left -= eventHandlers.OnLeft;
-                ServerHandlers.RoundStarted -= eventHandlers.OnRoundStarted;
-                ServerHandlers.WaitingForPlayers -= eventHandlers.OnWaitingForPlayers;
                 ServerHandlers.RoundEnded -= eventHandlers.OnRoundEnded;
             }
+
+            ServerHandlers.RoundStarted -= ScpToReplace.ClearAll;
+            ServerHandlers.WaitingForPlayers -= ScpToReplace.ClearAll;
 
             ScpToReplace.ClearAll();
 
